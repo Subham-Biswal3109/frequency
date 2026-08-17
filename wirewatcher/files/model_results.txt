@@ -1,0 +1,154 @@
+======================================================================
+WIRE WATCHER — DATA QUALITY REPORT
+======================================================================
+Source file : ml_training_samples.csv
+data_type value(s) present : ['synthetic']
+NOTE: This dataset is SYNTHETIC. It must not be described as real-world
+      Indian spectrum measurement data in the final report.
+
+Row count            : 10000
+Column count          : 21
+
+-- Duplicates --
+Full-row duplicates       : 0
+Duplicate sample_id rows  : 0
+
+-- Missing values (per column) --
+  district                     10000 missing (100.0%)
+
+-- Invalid frequency ranges (start_frequency_mhz >= end_frequency_mhz) --
+Invalid rows: 0
+
+-- Invalid occupancy values (outside [0, 1]) --
+occupancy_ratio out of range        : 0
+target_occupancy_ratio out of range  : 0
+
+-- Invalid target values (must be 0 or 1) --
+Unique target_available values: [0, 1]
+Rows with invalid target value: 0
+
+-- Class distribution (target_available) --
+  class 0: 9547 rows (95.47%)
+  class 1: 453 rows (4.53%)
+Imbalance ratio (majority:minority) approx 21.1 : 1
+
+-- Numerical feature ranges --
+                         min      max     mean     std
+start_frequency_mhz  470.000 2110.000 1016.522 498.366
+end_frequency_mhz    585.000 2200.000 1142.272 536.829
+bandwidth_mhz          1.800   20.000    9.954   6.859
+hour_of_day            0.000   23.000   11.450   6.921
+day_of_week            0.000    6.000    2.999   2.000
+signal_power_dbm    -101.022  -60.717  -80.651   5.068
+noise_floor_dbm     -111.843  -92.424 -101.989   2.531
+snr_db                 1.998   38.423   21.339   4.364
+occupancy_ratio        0.077    0.765    0.417   0.101
+interference_score     0.024    0.793    0.391   0.104
+
+-- Suspected leakage check --
+target_occupancy_ratio == occupancy_ratio for 100.0% of rows.
+occupancy_ratio by class:
+                  mean   std   min   max
+target_available                        
+0                0.427 0.093 0.209 0.765
+1                0.214 0.032 0.077 0.250
+-> The two classes are almost perfectly separable using occupancy_ratio alone. This indicates the synthetic label-generation process derived target_available (near-)directly from occupancy_ratio / interference_score. See the leakage discussion at the end of this report.
+
+                 experiment              model  accuracy  precision  recall     f1  roc_auc
+  Experiment_A_no_occupancy LogisticRegression    0.8345     0.1907  0.8132 0.3090   0.8971
+  Experiment_A_no_occupancy       RandomForest    0.9540     0.4615  0.0659 0.1154   0.8928
+Experiment_B_with_occupancy LogisticRegression    0.9815     0.7109  1.0000 0.8311   1.0000
+Experiment_B_with_occupancy       RandomForest    1.0000     1.0000  1.0000 1.0000   1.0000
+
+======================================================================
+TARGET LEAKAGE DISCUSSION
+======================================================================
+target_occupancy_ratio is identical to occupancy_ratio in 100% of rows in
+this export, and the two target_available classes are separated almost
+perfectly by occupancy_ratio alone (see the data-quality report above).
+This strongly suggests the synthetic data generator created
+target_available as a (near-)deterministic function of occupancy_ratio /
+interference_score, rather than these being independently-measured signals
+that merely correlate with availability.
+
+Consequence for Experiment B (which uses occupancy_ratio and
+interference_score as features): the very high scores Experiment B produces
+should NOT be interpreted as "the model learned to predict spectrum
+availability well". They more likely reflect the model recovering the rule
+that was used to generate the label in the first place -- i.e. target
+leakage. In a real deployment, occupancy_ratio for a NOT-yet-assigned
+candidate frequency would not be known in advance in the same way it is
+known here for a labelled historical sample, so a model that leans heavily
+on occupancy_ratio may not transfer to genuine forward-looking prediction.
+
+Experiment A (excluding occupancy_ratio and interference_score) is the more
+defensible predictive setup for this FYP, because its features
+(frequency band, time, and RF measurements not derived from the label) do
+not have this same direct relationship to the label-generation process.
+For that reason, the BEST MODEL SAVED to disk (wire_watcher_model.pkl) is
+selected from Experiment A, not Experiment B, even where Experiment B shows
+higher raw metrics.
+
+FINAL CAVEATS
+-------------
+* This dataset is entirely SYNTHETIC. All numbers above describe how well a
+  model can recover patterns in synthetic, generator-created labels -- NOT
+  how well the system would perform on real-world Indian spectrum
+  allocation. No claim is made that this model "works" for real-world
+  spectrum allocation.
+* Class imbalance is severe (~95:5). Accuracy is not a meaningful headline
+  metric here; precision/recall/F1/ROC-AUC on the minority ("available")
+  class are what should be reported and discussed in the FYP write-up.
+
+
+======================================================================
+PER-MODEL CLASSIFICATION REPORTS
+======================================================================
+
+--- Experiment_A_no_occupancy / LogisticRegression ---
+              precision    recall  f1-score   support
+
+           0       0.99      0.84      0.91      1909
+           1       0.19      0.81      0.31        91
+
+    accuracy                           0.83      2000
+   macro avg       0.59      0.82      0.61      2000
+weighted avg       0.95      0.83      0.88      2000
+
+Confusion matrix image: confusion_matrix_Experiment_A_no_occupancy_LogisticRegression.png
+
+--- Experiment_A_no_occupancy / RandomForest ---
+              precision    recall  f1-score   support
+
+           0       0.96      1.00      0.98      1909
+           1       0.46      0.07      0.12        91
+
+    accuracy                           0.95      2000
+   macro avg       0.71      0.53      0.55      2000
+weighted avg       0.93      0.95      0.94      2000
+
+Confusion matrix image: confusion_matrix_Experiment_A_no_occupancy_RandomForest.png
+
+--- Experiment_B_with_occupancy / LogisticRegression ---
+              precision    recall  f1-score   support
+
+           0       1.00      0.98      0.99      1909
+           1       0.71      1.00      0.83        91
+
+    accuracy                           0.98      2000
+   macro avg       0.86      0.99      0.91      2000
+weighted avg       0.99      0.98      0.98      2000
+
+Confusion matrix image: confusion_matrix_Experiment_B_with_occupancy_LogisticRegression.png
+
+--- Experiment_B_with_occupancy / RandomForest ---
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00      1909
+           1       1.00      1.00      1.00        91
+
+    accuracy                           1.00      2000
+   macro avg       1.00      1.00      1.00      2000
+weighted avg       1.00      1.00      1.00      2000
+
+Confusion matrix image: confusion_matrix_Experiment_B_with_occupancy_RandomForest.png

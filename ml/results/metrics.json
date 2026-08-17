@@ -1,0 +1,82 @@
+[
+  {
+    "experiment": "Experiment_A_leakage_safe",
+    "model": "LogisticRegression",
+    "accuracy": 0.8257440476190476,
+    "precision": 0.16907514450867053,
+    "recall": 0.9176470588235294,
+    "f1": 0.2855399633923124,
+    "roc_auc": 0.9404643404152071,
+    "confusion_matrix": [
+      [
+        5315,
+        1150
+      ],
+      [
+        21,
+        234
+      ]
+    ],
+    "confusion_matrix_image": "confusion_matrix_Experiment_A_leakage_safe_LogisticRegression.png"
+  },
+  {
+    "experiment": "Experiment_A_leakage_safe",
+    "model": "RandomForest",
+    "accuracy": 0.9584821428571428,
+    "precision": 0.4375,
+    "recall": 0.32941176470588235,
+    "f1": 0.37583892617449666,
+    "roc_auc": 0.9364827199247835,
+    "confusion_matrix": [
+      [
+        6357,
+        108
+      ],
+      [
+        171,
+        84
+      ]
+    ],
+    "confusion_matrix_image": "confusion_matrix_Experiment_A_leakage_safe_RandomForest.png"
+  },
+  {
+    "experiment": "Experiment_B_measurement_assisted",
+    "model": "LogisticRegression",
+    "accuracy": 0.9867559523809524,
+    "precision": 0.7412790697674418,
+    "recall": 1.0,
+    "f1": 0.8514190317195326,
+    "roc_auc": 0.9999642115160063,
+    "confusion_matrix": [
+      [
+        6376,
+        89
+      ],
+      [
+        0,
+        255
+      ]
+    ],
+    "confusion_matrix_image": "confusion_matrix_Experiment_B_measurement_assisted_LogisticRegression.png"
+  },
+  {
+    "experiment": "Experiment_B_measurement_assisted",
+    "model": "RandomForest",
+    "accuracy": 0.9995535714285714,
+    "precision": 0.9883720930232558,
+    "recall": 1.0,
+    "f1": 0.9941520467836257,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        6462,
+        3
+      ],
+      [
+        0,
+        255
+      ]
+    ],
+    "confusion_matrix_image": "confusion_matrix_Experiment_B_measurement_assisted_RandomForest.png"
+  }
+]

@@ -1,0 +1,26 @@
+band_id,start_frequency_mhz,end_frequency_mhz,service_type,regulatory_status,assignment_status,occupancy_status,country,source
+B001,470,585,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B002,585,610,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B003,610,890,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B004,890,942,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B005,942,960,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B006,1427,1518,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B007,1710,2025,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B008,2110,2200,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B009,2300,2400,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B010,2500,2690,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B011,3300,3400,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B012,3400,3500,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B013,3500,3600,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B014,3600,3670,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B015,6425,7025,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B016,7025,7125,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B017,24250,27500,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B018,37000,40000,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B019,42500,43500,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B020,66000,71000,IMT candidate,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B021,2400,2483.5,Low Power / RLAN,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B022,5150,5250,WAS/RLAN,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B023,5250,5350,WAS/RLAN,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B024,5470,5725,WAS/RLAN,regulatory_reference,not_verified,not_verified,India,NFAP-2025
+B025,5725,5875,WAS/RLAN,regulatory_reference,not_verified,not_verified,India,NFAP-2025

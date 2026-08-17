@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wire Watcher | Spectrum Prediction</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2 15h10"/><path d="M9 18v-6"/><path d="M5 18v-6"/></svg>
+                <h1>Wire Watcher</h1>
+            </div>
+            <p class="subtitle">AI-Powered Spectrum Availability Prediction</p>
+        </header>
+
+        <main>
+            <div class="card form-card">
+                <h2>Prediction Parameters</h2>
+                <form id="predict-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="start_frequency_mhz">Start Frequency (MHz)</label>
+                            <input type="number" id="start_frequency_mhz" step="0.001" required value="1800">
+                        </div>
+                        <div class="form-group">
+                            <label for="end_frequency_mhz">End Frequency (MHz)</label>
+                            <input type="number" id="end_frequency_mhz" step="0.001" required value="1810">
+                        </div>
+                        <div class="form-group">
+                            <label for="bandwidth_mhz">Bandwidth (MHz)</label>
+                            <input type="number" id="bandwidth_mhz" step="0.001" required value="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="service_type">Service Type</label>
+                            <input type="text" id="service_type" required value="4G LTE">
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" id="state" required value="Karnataka">
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City / District</label>
+                            <input type="text" id="city" required value="Bangalore">
+                        </div>
+                        <div class="form-group">
+                            <label for="hour_of_day">Hour of Day (0-23)</label>
+                            <input type="number" id="hour_of_day" min="0" max="23" required value="14">
+                        </div>
+                        <div class="form-group">
+                            <label for="day_of_week">Day of Week (0-6)</label>
+                            <input type="number" id="day_of_week" min="0" max="6" required value="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="signal_power_dbm">Signal Power (dBm)</label>
+                            <input type="number" id="signal_power_dbm" step="0.01" required value="-85">
+                        </div>
+                        <div class="form-group">
+                            <label for="noise_floor_dbm">Noise Floor (dBm)</label>
+                            <input type="number" id="noise_floor_dbm" step="0.01" required value="-105">
+                        </div>
+                        <div class="form-group">
+                            <label for="snr_db">SNR (dB)</label>
+                            <input type="number" id="snr_db" step="0.01" required value="20">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-btn">
+                        <span class="btn-text">Generate Prediction</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                </form>
+            </div>
+
+            <div class="card result-card hidden" id="result-container">
+                <h2>Prediction Result</h2>
+                <div class="result-display" id="result-display">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+            
+            <div class="alert hidden" id="error-alert"></div>
+        </main>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
