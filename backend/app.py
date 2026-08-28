@@ -6,12 +6,15 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS
 from backend.config import WEB_DIR
 from backend.api.routes import api_bp
+from backend.api.routes_simulation import simulation_bp
 
 app = Flask(__name__, static_folder=str(WEB_DIR))
 CORS(app)
 
 # Register API routes
 app.register_blueprint(api_bp)
+# Spectrum Simulation module — additive, does not affect any existing route.
+app.register_blueprint(simulation_bp)
 
 @app.route("/")
 def index():

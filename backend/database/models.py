@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, String, Numeric, DateTime
+from sqlalchemy import Column, BigInteger, String, Numeric, DateTime, Text
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -32,3 +32,21 @@ class AvailabilityCandidate(Base):
     threshold_applied = Column(Numeric(6, 5))
     ood_status = Column(String(10)) 
     data_source = Column(String(50))
+
+
+class SpectrumSimulation(Base):
+    """
+    Separate table for the Spectrum Simulation module (section 24).
+    Does NOT touch or alter availability_candidates in any way. Created
+    automatically (if missing) by backend/api/routes_simulation.py via
+    Base.metadata.create_all(tables=[...]) — additive only, never dropped
+    or migrated destructively.
+    """
+    __tablename__ = "spectrum_simulations"
+
+    simulation_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    created_at = Column(DateTime)
+    mode = Column(String(20))
+    configuration_json = Column(Text)   # raw request payload, for reproducibility
+    result_summary_json = Column(Text)  # compact summary: channel count, occupied/available counts
+    allocated_channel_json = Column(Text, nullable=True)  # selected candidate, if any

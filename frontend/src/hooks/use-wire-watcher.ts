@@ -1,8 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { getHealth, getPredictions, predict, analyzeSpectrum } from "@/services/api";
+import { getHealth, getPredictions, predict, analyzeSpectrum, runSimulation, runSnrSweep } from "@/services/api";
 import { ApiError } from "@/services/api";
-import type { PredictRequest, PredictionRecord, AnalyzeSpectrumResponse } from "@/types/wire-watcher";
+import type {
+  PredictRequest,
+  PredictionRecord,
+  AnalyzeSpectrumResponse,
+  SimulationRunRequest,
+} from "@/types/wire-watcher";
 
 const noRetryOnClientError = (failureCount: number, error: unknown) => {
   if (error instanceof ApiError && ["not_implemented", "validation", "malformed"].includes(error.kind)) {
@@ -52,6 +57,20 @@ export function usePredict() {
 export function useAnalyzeSpectrum() {
   return useMutation({
     mutationFn: (input: Partial<PredictRequest>) => analyzeSpectrum(input),
+  });
+}
+
+/** POST /api/simulation/run — Spectrum Simulation module (separate feature). */
+export function useRunSimulation() {
+  return useMutation({
+    mutationFn: (input: SimulationRunRequest) => runSimulation(input),
+  });
+}
+
+/** POST /api/simulation/snr-sweep */
+export function useSnrSweep() {
+  return useMutation({
+    mutationFn: (input: Parameters<typeof runSnrSweep>[0]) => runSnrSweep(input),
   });
 }
 

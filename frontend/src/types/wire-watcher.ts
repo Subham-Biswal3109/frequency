@@ -116,3 +116,119 @@ export type ApiErrorKind =
   | "server"
   | "malformed"
   | "not_implemented";
+
+/* ------------------------- Spectrum Simulation --------------------------
+ * Types mirroring the NEW, separate /api/simulation/* endpoints.
+ * This module does not replace or alter PredictRequest/PredictResponse.
+ * -------------------------------------------------------------------- */
+
+export type SimulationMode = "basic" | "ml_assisted" | "multi_user";
+
+export type ChannelState = "OCCUPIED" | "AVAILABLE" | "UNAVAILABLE" | "ALLOCATED";
+
+export interface SimulationChannel {
+  channel_id: number;
+  start_mhz: number;
+  end_mhz: number;
+  center_mhz: number;
+  bandwidth_mhz: number;
+  rf_signal_power_dbm: number;
+  rf_noise_floor_dbm: number;
+  rf_snr_db: number;
+  rf_state: "OCCUPIED" | "AVAILABLE";
+  ml_probability: number | null;
+  ml_threshold: number | null;
+  ml_decision: string;
+  ml_ood_warning: boolean;
+  ml_ood_reasons: string[];
+  state: ChannelState;
+}
+
+export interface AllocationCandidate {
+  channel_ids: number[];
+  start_mhz: number;
+  end_mhz: number;
+  total_bandwidth_mhz: number;
+  avg_snr_db: number;
+  avg_ml_probability: number | null;
+  isolation_score: number;
+  score: number;
+  rank: number;
+}
+
+export interface AllocationResult {
+  requested_bandwidth_mhz: number;
+  success: boolean;
+  selected: AllocationCandidate | null;
+  top_candidates: AllocationCandidate[];
+  message: string;
+  final_channels: SimulationChannel[];
+}
+
+export interface ResourceUtilization {
+  total_mhz: number;
+  occupied_mhz: number;
+  available_mhz: number;
+  allocated_mhz: number;
+}
+
+export interface MultiUserResult {
+  user_id: string;
+  requested_bandwidth_mhz: number;
+  success: boolean;
+  selected: AllocationCandidate | null;
+  top_candidates: AllocationCandidate[];
+  message: string;
+}
+
+export interface MultiUserAllocation {
+  user_results: MultiUserResult[];
+  final_channels: SimulationChannel[];
+  utilization_timeline: ResourceUtilization[];
+}
+
+export interface SimulationRunRequest {
+  start_frequency_mhz: number;
+  end_frequency_mhz: number;
+  channel_bandwidth_mhz: number;
+  noise_floor_dbm: number;
+  num_existing_users: number;
+  seed?: number;
+  mode: SimulationMode;
+  requested_bandwidth_mhz?: number;
+  users?: Array<{ user_id: string; requested_bandwidth_mhz: number }>;
+  state?: string;
+  city?: string;
+  service_type?: string;
+}
+
+export interface SimulationRunResponse {
+  mode: SimulationMode;
+  channels: SimulationChannel[];
+  spectrum_data: { frequencies: number[]; power_dbm: number[] };
+  occupied_regions: Array<{ start_mhz: number; end_mhz: number }>;
+  available_regions: Array<{ start_mhz: number; end_mhz: number }>;
+  model_loaded: boolean;
+  noise_floor_dbm: number;
+  resource_utilization_before: ResourceUtilization;
+  resource_utilization_after: ResourceUtilization;
+  allocation?: AllocationResult;
+  multi_user_allocation?: MultiUserAllocation;
+  disclaimer: string;
+}
+
+export interface SnrSweepPoint {
+  snr_db: number;
+  noise_floor_dbm: number;
+  probability: number | null;
+  decision: string;
+  threshold?: number;
+  ood_warning?: boolean;
+  ood_reasons?: string[];
+}
+
+export interface SnrSweepResponse {
+  model_loaded: boolean;
+  points: SnrSweepPoint[];
+  disclaimer: string;
+}

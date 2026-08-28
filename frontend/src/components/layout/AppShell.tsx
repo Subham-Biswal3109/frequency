@@ -7,6 +7,7 @@ import {
   Menu,
   Radar,
   ServerCog,
+  Waves,
   X,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
@@ -16,10 +17,11 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: Gauge },
-  { to: "/predict", label: "Spectrum Prediction", icon: Radar },
+  { to: "/predict", label: "Prediction", icon: Radar },
   { to: "/history", label: "Prediction History", icon: History },
+  { to: "/simulation", label: "Spectrum Simulation", icon: Waves },
   { to: "/monitoring", label: "Spectrum Monitoring", icon: Activity },
-  { to: "/model", label: "ML Model", icon: BrainCircuit },
+  { to: "/model", label: "Model Information", icon: BrainCircuit },
   { to: "/status", label: "System Status", icon: ServerCog },
 ] as const;
 

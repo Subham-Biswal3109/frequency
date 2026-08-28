@@ -14,6 +14,7 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as ModelRouteImport } from './routes/model'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as PredictRouteImport } from './routes/predict'
+import { Route as SimulationRouteImport } from './routes/simulation'
 import { Route as StatusRouteImport } from './routes/status'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const PredictRoute = PredictRouteImport.update({
   path: '/predict',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SimulationRoute = SimulationRouteImport.update({
+  id: '/simulation',
+  path: '/simulation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StatusRoute = StatusRouteImport.update({
   id: '/status',
   path: '/status',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/model': typeof ModelRoute
   '/monitoring': typeof MonitoringRoute
   '/predict': typeof PredictRoute
+  '/simulation': typeof SimulationRoute
   '/status': typeof StatusRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/model': typeof ModelRoute
   '/monitoring': typeof MonitoringRoute
   '/predict': typeof PredictRoute
+  '/simulation': typeof SimulationRoute
   '/status': typeof StatusRoute
 }
 export interface FileRoutesById {
@@ -70,14 +78,28 @@ export interface FileRoutesById {
   '/model': typeof ModelRoute
   '/monitoring': typeof MonitoringRoute
   '/predict': typeof PredictRoute
+  '/simulation': typeof SimulationRoute
   '/status': typeof StatusRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/history' | '/model' | '/monitoring' | '/predict' | '/status'
+    | '/'
+    | '/history'
+    | '/model'
+    | '/monitoring'
+    | '/predict'
+    | '/simulation'
+    | '/status'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/history' | '/model' | '/monitoring' | '/predict' | '/status'
+  to:
+    | '/'
+    | '/history'
+    | '/model'
+    | '/monitoring'
+    | '/predict'
+    | '/simulation'
+    | '/status'
   id:
     | '__root__'
     | '/'
@@ -85,6 +107,7 @@ export interface FileRouteTypes {
     | '/model'
     | '/monitoring'
     | '/predict'
+    | '/simulation'
     | '/status'
   fileRoutesById: FileRoutesById
 }
@@ -94,6 +117,7 @@ export interface RootRouteChildren {
   ModelRoute: typeof ModelRoute
   MonitoringRoute: typeof MonitoringRoute
   PredictRoute: typeof PredictRoute
+  SimulationRoute: typeof SimulationRoute
   StatusRoute: typeof StatusRoute
 }
 
@@ -134,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PredictRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/simulation': {
+      id: '/simulation'
+      path: '/simulation'
+      fullPath: '/simulation'
+      preLoaderRoute: typeof SimulationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/status': {
       id: '/status'
       path: '/status'
@@ -150,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   ModelRoute: ModelRoute,
   MonitoringRoute: MonitoringRoute,
   PredictRoute: PredictRoute,
+  SimulationRoute: SimulationRoute,
   StatusRoute: StatusRoute,
 }
 export const routeTree = rootRouteImport

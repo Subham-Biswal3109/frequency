@@ -11,6 +11,9 @@ import type {
   PredictResponse,
   PredictionRecord,
   AnalyzeSpectrumResponse,
+  SimulationRunRequest,
+  SimulationRunResponse,
+  SnrSweepResponse,
 } from "@/types/wire-watcher";
 
 export const API_BASE_URL = (
@@ -265,4 +268,32 @@ export async function getHealth(): Promise<HealthResponse> {
 
 export async function getModelInfo(): Promise<import("@/types/wire-watcher").ModelInfoResponse> {
   return request<import("@/types/wire-watcher").ModelInfoResponse>("/api/model-info", { method: "GET" }, 8000);
+}
+
+/* ---------------------------- spectrum simulation ------------------------
+ * Separate module: POST /api/simulation/run, POST /api/simulation/snr-sweep.
+ * Does not touch the /api/predict, /api/spectrum/analyze code paths above.
+ * ------------------------------------------------------------------------- */
+
+export async function runSimulation(input: SimulationRunRequest): Promise<SimulationRunResponse> {
+  return request<SimulationRunResponse>(
+    "/api/simulation/run",
+    { method: "POST", body: JSON.stringify(input) },
+    30000, // simulations with many channels can take longer than the default 15s
+  );
+}
+
+export async function runSnrSweep(input: {
+  signal_power_dbm?: number;
+  start_frequency_mhz?: number;
+  end_frequency_mhz?: number;
+  bandwidth_mhz?: number;
+  state?: string;
+  city?: string;
+  service_type?: string;
+}): Promise<SnrSweepResponse> {
+  return request<SnrSweepResponse>("/api/simulation/snr-sweep", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
