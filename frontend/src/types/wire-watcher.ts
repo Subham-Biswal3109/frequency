@@ -232,3 +232,89 @@ export interface SnrSweepResponse {
   points: SnrSweepPoint[];
   disclaimer: string;
 }
+
+/* ------------------------- RF Interference/Jamming Detector -------------
+ * A SEPARATE model/task from spectrum availability. Target: benign vs
+ * malicious RF activity. Never mix with PredictRequest/PredictResponse or
+ * SimulationRunResponse types above.
+ * -------------------------------------------------------------------- */
+
+export interface JammingControlledMetrics {
+  description: string;
+  n: number;
+  class_distribution?: Record<string, number>;
+  accuracy: number;
+  precision: number;
+  recall: number;
+  f1: number;
+  confusion_matrix: number[][];
+  roc_auc: number;
+  pr_auc: number;
+}
+
+export interface JammingSupplementaryMetrics {
+  description: string;
+  n: number;
+  environment_composition?: Record<string, number>;
+  is_environment_confounded: boolean;
+  accuracy: number;
+  precision: number;
+  recall: number;
+  f1: number;
+  confusion_matrix: number[][];
+  roc_auc: number;
+  pr_auc: number;
+}
+
+export interface JammingModelInfoResponse {
+  model_loaded: boolean;
+  model_name: string;
+  model_version: string;
+  task: string;
+  dataset_name: string;
+  dataset_type: string;
+  training_samples: number;
+  validation_samples: number;
+  test_samples: number;
+  num_session_groups: { train: number; val: number; test: number };
+  algorithm: string;
+  best_threshold: number;
+  split_methodology: string;
+  threshold_tuning_methodology: string;
+  primary_controlled_metrics: JammingControlledMetrics;
+  supplementary_raw_test_metrics: JammingSupplementaryMetrics;
+  baseline_comparison: {
+    energy_baseline?: { accuracy: number; precision: number; recall: number; f1: number };
+    logistic_regression?: { accuracy: number; precision: number; recall: number; f1: number; roc_auc: number };
+    decision_tree?: { accuracy: number; precision: number; recall: number; f1: number; roc_auc: number };
+  };
+  feature_importances: Array<[string, number]>;
+  limitations: string[];
+  disclaimer: string;
+}
+
+export interface JammingSampleSummary {
+  sample_id: string;
+  file_name: string;
+  true_label: "benign" | "malicious";
+  band: string;
+  scan_mode: string;
+  waveform: string | null;
+  power_dbm: number | null;
+}
+
+export interface JammingSamplesResponse {
+  samples: JammingSampleSummary[];
+  count: number;
+}
+
+export interface JammingPredictResponse {
+  sample_id?: string;
+  file_name?: string;
+  true_label?: "benign" | "malicious";
+  prediction: "benign" | "malicious";
+  probability_malicious: number;
+  threshold: number;
+  correct?: boolean;
+  disclaimer: string;
+}

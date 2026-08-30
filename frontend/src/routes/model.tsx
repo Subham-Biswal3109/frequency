@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ShieldAlert } from "lucide-react";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { ApiErrorNotice } from "@/components/wire/ApiStateNotice";
 import { Panel } from "@/components/wire/Panel";
-import { useHealth } from "@/hooks/use-wire-watcher";
+import { useHealth, useJammingModelInfo } from "@/hooks/use-wire-watcher";
 
 export const Route = createFileRoute("/model")({
   head: () => ({
@@ -41,13 +42,21 @@ const FEATURES = [
 
 function ModelPage() {
   const { data, error, isPending } = useHealth();
+  const jamming = useJammingModelInfo();
 
   return (
     <AppShell
       title="ML Model"
-      description="Random Forest classifier served by the existing Flask API. Metrics are only shown if the backend reports them."
+      description="Two separate models power Wire Watcher: a spectrum availability predictor (below) and a research-only RF jamming detector (further down). They are never combined."
     >
       <div className="space-y-6">
+        <Panel title="Spectrum Availability Model" subtitle="Purpose: Available / Occupied prediction.">
+          <p className="text-sm text-muted-foreground">
+            The primary model used across Prediction, Prediction History, and Spectrum Simulation. See
+            the architecture and input features below.
+          </p>
+        </Panel>
+
         <div className="grid gap-6 xl:grid-cols-2">
           <Panel title="Architecture" subtitle="As implemented in the existing backend.">
             <dl className="grid gap-3 text-sm">
@@ -130,6 +139,58 @@ function ModelPage() {
               </tbody>
             </table>
           </div>
+        </Panel>
+
+        <hr className="border-border" />
+
+        <Panel
+          title="RF Interference / Jamming Detection Model"
+          subtitle="Purpose: Benign / Malicious RF classification — a SEPARATE model and task from spectrum availability."
+          action={
+            <Link to="/jamming" className="text-xs font-medium text-primary hover:underline">
+              Open detector →
+            </Link>
+          }
+        >
+          {jamming.isError ? (
+            <ApiErrorNotice
+              error={jamming.error}
+              endpoint="GET /api/jamming/model-info"
+              purpose="Reports the jamming detector's dataset, controlled metrics, and limitations."
+            />
+          ) : jamming.data ? (
+            <div className="space-y-4">
+              <div className="flex items-start gap-2 rounded-md border border-warning/30 bg-warning/8 px-3 py-2 text-xs text-warning">
+                <ShieldAlert className="mt-0.5 size-4 shrink-0" />
+                This model never predicts "Available" or "Occupied" — its two classes are benign vs.
+                malicious RF activity.
+              </div>
+              <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                <div>
+                  <dt className="label-caps text-[10px]">Dataset</dt>
+                  <dd className="mt-0.5">{jamming.data.dataset_name}</dd>
+                </div>
+                <div>
+                  <dt className="label-caps text-[10px]">Dataset Type</dt>
+                  <dd className="numeric mt-0.5">{jamming.data.dataset_type}</dd>
+                </div>
+                <div>
+                  <dt className="label-caps text-[10px]">F1 (controlled)</dt>
+                  <dd className="numeric mt-0.5 text-primary">{jamming.data.primary_controlled_metrics.f1.toFixed(3)}</dd>
+                </div>
+                <div>
+                  <dt className="label-caps text-[10px]">ROC-AUC (controlled)</dt>
+                  <dd className="numeric mt-0.5 text-primary">{jamming.data.primary_controlled_metrics.roc_auc.toFixed(3)}</dd>
+                </div>
+              </dl>
+              <p className="text-xs text-muted-foreground">
+                Controlled evaluation was designed to avoid the environment/label confounding present in
+                the raw test split (see the detector page for the full breakdown and limitations).
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          )}
         </Panel>
       </div>
     </AppShell>

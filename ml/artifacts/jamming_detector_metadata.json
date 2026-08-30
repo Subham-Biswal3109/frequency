@@ -1,0 +1,515 @@
+{
+  "model_name": "jamming_detector",
+  "model_version": "1.1.0",
+  "training_date": "2026-08-29T08:50:25.762176+00:00",
+  "task": "RF interference / jamming detection (benign vs malicious)",
+  "NOT": "This is not a spectrum availability / occupancy model. See README.md.",
+  "dataset_name": "release_artifacts (real experimental RF spectral-scan captures)",
+  "dataset_type": "REAL_MEASURED",
+  "training_samples": 64051,
+  "validation_samples": 15512,
+  "test_samples": 16527,
+  "num_session_groups": {
+    "train": 122,
+    "val": 5,
+    "test": 4
+  },
+  "class_balance_overall": {
+    "0": 0.8055781038609637,
+    "1": 0.19442189613903632
+  },
+  "feature_columns": [
+    "freq1_mean",
+    "freq1_std",
+    "freq1_min",
+    "freq1_q25",
+    "freq1_median",
+    "freq1_q75",
+    "freq1_max",
+    "noise_mean",
+    "noise_std",
+    "noise_min",
+    "noise_q25",
+    "noise_median",
+    "noise_q75",
+    "noise_max",
+    "max_magnitude_mean",
+    "max_magnitude_std",
+    "max_magnitude_min",
+    "max_magnitude_q25",
+    "max_magnitude_median",
+    "max_magnitude_q75",
+    "max_magnitude_max",
+    "total_gain_db_mean",
+    "total_gain_db_std",
+    "total_gain_db_min",
+    "total_gain_db_q25",
+    "total_gain_db_median",
+    "total_gain_db_q75",
+    "total_gain_db_max",
+    "base_pwr_db_mean",
+    "base_pwr_db_std",
+    "base_pwr_db_min",
+    "base_pwr_db_q25",
+    "base_pwr_db_median",
+    "base_pwr_db_q75",
+    "base_pwr_db_max",
+    "rssi_mean",
+    "rssi_std",
+    "rssi_min",
+    "rssi_q25",
+    "rssi_median",
+    "rssi_q75",
+    "rssi_max",
+    "relpwr_db_mean",
+    "relpwr_db_std",
+    "relpwr_db_min",
+    "relpwr_db_q25",
+    "relpwr_db_median",
+    "relpwr_db_q75",
+    "relpwr_db_max",
+    "avgpwr_db_mean",
+    "avgpwr_db_std",
+    "avgpwr_db_min",
+    "avgpwr_db_q25",
+    "avgpwr_db_median",
+    "avgpwr_db_q75",
+    "avgpwr_db_max",
+    "band__2.4GHz",
+    "band__5GHz",
+    "scan_mode__active",
+    "scan_mode__passive"
+  ],
+  "categorical_encoding": {
+    "band": [
+      "2.4GHz",
+      "5GHz"
+    ],
+    "scan_mode": [
+      "active",
+      "passive"
+    ]
+  },
+  "algorithm": "RandomForestClassifier",
+  "hyperparameters": {
+    "bootstrap": true,
+    "ccp_alpha": 0.0,
+    "class_weight": "balanced",
+    "criterion": "gini",
+    "max_depth": null,
+    "max_features": "sqrt",
+    "max_leaf_nodes": null,
+    "max_samples": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 2,
+    "min_samples_split": 2,
+    "min_weight_fraction_leaf": 0.0,
+    "monotonic_cst": null,
+    "n_estimators": 300,
+    "n_jobs": -1,
+    "oob_score": false,
+    "random_state": 42,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "best_threshold": 0.35,
+  "threshold_tuning_methodology": "5-fold group-aware (StratifiedGroupKFold) cross-validation on the TRAINING set only, maximizing F1 on out-of-fold predictions. Neither val nor test was used to select the threshold, since the controlled evaluation set below is drawn from val/test directly.",
+  "split_methodology": "Group-aware (StratifiedGroupKFold) split using whole, UNDIVIDED experimental sessions as groups (label, benign_subtype, location, waveform, power_dbm, channel_mhz, band, scan_mode) -- no continuous recording run is ever divided between splits. This dataset has only 131 such sessions and a few are very large, so stratifying by label alone can, by chance, produce a test split with skewed environment representation (this happened with this exact seed: this split's test set ended up 100% environment-confounded -- see 'headline_vs_supplementary_metrics' below). We did NOT force artificial balance via chunking sessions into smaller pieces, since that would let temporally-adjacent (and therefore correlated) slices of the SAME recording run cross the train/test boundary -- a subtler violation of independence than the imbalance it would fix. True independence was prioritized over balanced classes, per the project's explicit instruction.",
+  "headline_vs_supplementary_metrics": {
+    "controlled_same_environment_eval": {
+      "description": "Headline metric. Drawn entirely from the 'val' split, restricted to collection_environment=='rf_chamber' (the only environment containing both classes), so environment cannot explain the score.",
+      "n": 15512,
+      "class_distribution": {
+        "0": 13093,
+        "1": 2419
+      },
+      "metrics": {
+        "accuracy": 0.9462,
+        "precision": 0.7438,
+        "recall": 0.9988,
+        "f1": 0.8527,
+        "confusion_matrix": [
+          [
+            12261,
+            832
+          ],
+          [
+            3,
+            2416
+          ]
+        ],
+        "roc_auc": 0.9869,
+        "pr_auc": 0.9154
+      }
+    },
+    "raw_test_split_eval": {
+      "description": "Supplementary only. This test split happened to be 100% environment-confounded (real_world_indoor is 100% benign, rf_chamber is 100% malicious in THIS split) -- so a high score here partly reflects 'which environment' rather than 'is this signal malicious'. Reported transparently, not used as the headline result.",
+      "n": 16527,
+      "environment_composition": {
+        "real_world_indoor": 13488,
+        "rf_chamber": 3039
+      },
+      "is_environment_confounded": true,
+      "metrics": {
+        "accuracy": 0.9781,
+        "precision": 0.8936,
+        "recall": 1.0,
+        "f1": 0.9438,
+        "confusion_matrix": [
+          [
+            13126,
+            362
+          ],
+          [
+            0,
+            3039
+          ]
+        ],
+        "roc_auc": 1.0,
+        "pr_auc": 1.0
+      }
+    }
+  },
+  "metrics": {
+    "energy_baseline": {
+      "accuracy": 0.5731,
+      "precision": 0.1237,
+      "recall": 0.2172,
+      "f1": 0.1576,
+      "confusion_matrix": [
+        [
+          8811,
+          4677
+        ],
+        [
+          2379,
+          660
+        ]
+      ]
+    },
+    "logistic_regression_baseline": {
+      "accuracy": 0.5515,
+      "precision": 0.2908,
+      "recall": 1.0,
+      "f1": 0.4505,
+      "confusion_matrix": [
+        [
+          6075,
+          7413
+        ],
+        [
+          0,
+          3039
+        ]
+      ],
+      "roc_auc": 0.9936,
+      "pr_auc": 0.9676
+    },
+    "decision_tree_baseline": {
+      "accuracy": 0.9622,
+      "precision": 0.8408,
+      "recall": 0.9803,
+      "f1": 0.9052,
+      "confusion_matrix": [
+        [
+          12924,
+          564
+        ],
+        [
+          60,
+          2979
+        ]
+      ],
+      "roc_auc": 0.962,
+      "pr_auc": 0.7773
+    },
+    "random_forest_controlled": {
+      "accuracy": 0.9462,
+      "precision": 0.7438,
+      "recall": 0.9988,
+      "f1": 0.8527,
+      "confusion_matrix": [
+        [
+          12261,
+          832
+        ],
+        [
+          3,
+          2416
+        ]
+      ],
+      "roc_auc": 0.9869,
+      "pr_auc": 0.9154
+    },
+    "random_forest_raw_test_confounded": {
+      "accuracy": 0.9781,
+      "precision": 0.8936,
+      "recall": 1.0,
+      "f1": 0.9438,
+      "confusion_matrix": [
+        [
+          13126,
+          362
+        ],
+        [
+          0,
+          3039
+        ]
+      ],
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    }
+  },
+  "energy_baseline_threshold_max_magnitude_mean": 53.5616,
+  "feature_importances": [
+    [
+      "max_magnitude_max",
+      0.08976393205698865
+    ],
+    [
+      "rssi_min",
+      0.06879565350270903
+    ],
+    [
+      "avgpwr_db_max",
+      0.05634427999141166
+    ],
+    [
+      "total_gain_db_q25",
+      0.049811964026450134
+    ],
+    [
+      "base_pwr_db_q75",
+      0.047967150596352134
+    ],
+    [
+      "relpwr_db_std",
+      0.045274953322628084
+    ],
+    [
+      "relpwr_db_max",
+      0.0417283021940055
+    ],
+    [
+      "freq1_std",
+      0.039074546522018326
+    ],
+    [
+      "base_pwr_db_max",
+      0.038047798905891404
+    ],
+    [
+      "rssi_q75",
+      0.03596268272086411
+    ],
+    [
+      "rssi_q25",
+      0.03375149892393546
+    ],
+    [
+      "base_pwr_db_mean",
+      0.02897977371112337
+    ],
+    [
+      "noise_q25",
+      0.027970202654147278
+    ],
+    [
+      "total_gain_db_min",
+      0.027195896913795585
+    ],
+    [
+      "avgpwr_db_min",
+      0.026151769847934256
+    ],
+    [
+      "noise_mean",
+      0.024583931951454304
+    ],
+    [
+      "max_magnitude_min",
+      0.020814232236206074
+    ],
+    [
+      "freq1_mean",
+      0.02065896750566691
+    ],
+    [
+      "rssi_mean",
+      0.0206521977288503
+    ],
+    [
+      "rssi_std",
+      0.019764351096610757
+    ],
+    [
+      "noise_median",
+      0.017858855297789543
+    ],
+    [
+      "total_gain_db_mean",
+      0.017356227265034926
+    ],
+    [
+      "relpwr_db_mean",
+      0.015959136565915855
+    ],
+    [
+      "base_pwr_db_std",
+      0.014904654636885863
+    ],
+    [
+      "total_gain_db_max",
+      0.014598869030735257
+    ],
+    [
+      "total_gain_db_std",
+      0.013034799822520643
+    ],
+    [
+      "noise_q75",
+      0.01195734471378389
+    ],
+    [
+      "base_pwr_db_median",
+      0.010007418545969753
+    ],
+    [
+      "max_magnitude_std",
+      0.009818530106711722
+    ],
+    [
+      "total_gain_db_q75",
+      0.009303412540680902
+    ],
+    [
+      "max_magnitude_mean",
+      0.008653541667418389
+    ],
+    [
+      "noise_std",
+      0.008463465317497386
+    ],
+    [
+      "relpwr_db_q25",
+      0.00803682717217767
+    ],
+    [
+      "rssi_max",
+      0.007618020441294628
+    ],
+    [
+      "relpwr_db_q75",
+      0.007411758454149687
+    ],
+    [
+      "total_gain_db_median",
+      0.0068031602688149
+    ],
+    [
+      "max_magnitude_median",
+      0.005531263661433734
+    ],
+    [
+      "max_magnitude_q25",
+      0.004720851922132904
+    ],
+    [
+      "base_pwr_db_q25",
+      0.004324023403773512
+    ],
+    [
+      "noise_min",
+      0.003766407114212429
+    ],
+    [
+      "avgpwr_db_std",
+      0.003652819533989248
+    ],
+    [
+      "max_magnitude_q75",
+      0.003373598850296973
+    ],
+    [
+      "avgpwr_db_q75",
+      0.0030039406449344835
+    ],
+    [
+      "freq1_median",
+      0.0028170071997390697
+    ],
+    [
+      "relpwr_db_min",
+      0.002595319900674492
+    ],
+    [
+      "freq1_q75",
+      0.002504640959815554
+    ],
+    [
+      "rssi_median",
+      0.002474503253451783
+    ],
+    [
+      "freq1_q25",
+      0.001978383998838612
+    ],
+    [
+      "scan_mode__active",
+      0.0019042796354646141
+    ],
+    [
+      "freq1_max",
+      0.0017608462660114502
+    ],
+    [
+      "relpwr_db_median",
+      0.0014840445454865276
+    ],
+    [
+      "scan_mode__passive",
+      0.0013267695871245519
+    ],
+    [
+      "freq1_min",
+      0.0011885485759980973
+    ],
+    [
+      "noise_max",
+      0.0011669059910412417
+    ],
+    [
+      "avgpwr_db_median",
+      0.0010418281487273669
+    ],
+    [
+      "avgpwr_db_mean",
+      0.0010266667746203536
+    ],
+    [
+      "avgpwr_db_q25",
+      0.001020951830827309
+    ],
+    [
+      "base_pwr_db_min",
+      0.0008161653787343561
+    ],
+    [
+      "band__5GHz",
+      0.0007501108924579066
+    ],
+    [
+      "band__2.4GHz",
+      0.0006900136737890453
+    ]
+  ],
+  "limitations": [
+    "Labels reflect a controlled benign-vs-jamming experimental protocol, not a general spectrum occupancy/availability ground truth.",
+    "All malicious (jamming) samples were collected in an RF chamber; all real_world_indoor samples are benign -- this dataset CANNOT support a test of jamming-detection generalization to real-world environments, and no such claim is made.",
+    "Only 131 distinct experimental sessions underlie 96,090 files, several of them very large (13,000+ rows); this limits how finely train/val/test proportions can be tuned without dividing a single continuous recording run across splits.",
+    "The raw test split for this run happened to be 100% environment-confounded (see headline_vs_supplementary_metrics) -- its near-perfect score should not be quoted as the model's real detection accuracy; use the controlled_same_environment_eval instead.",
+    "rssi_dbm-style calibrated dBm values are not used as a feature. This field already existed in the release's own derived file_level_features table (we did not compute or introduce it); we verified empirically that rssi_dbm == rssi - 95 for every row with zero variance in that offset, and the release's data dictionary documents `rssi` only as a driver-scale value, not a calibrated measurement -- so we exclude rssi_dbm and use only the documented driver-scale rssi_* statistics.",
+    "Frequency coverage is limited to 2.4GHz and 5GHz Wi-Fi bands only.",
+    "The unseen-location generalization check only covers the benign class (malicious is chamber-only, so no unseen-location test of jamming detection is possible with this data)."
+  ]
+}

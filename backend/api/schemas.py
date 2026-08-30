@@ -95,3 +95,28 @@ class SnrSweepRequest(BaseModel):
         if self.end_frequency_mhz <= self.start_frequency_mhz:
             raise ValueError("end_frequency_mhz must be greater than start_frequency_mhz")
         return self
+
+
+class JammingSampleRequest(BaseModel):
+    """
+    Request schema for POST /api/jamming/predict — the RF Interference/
+    Jamming Detector (a SEPARATE model from spectrum availability).
+
+    Two ways to call this:
+      1. sample_id: run inference on one of the held-out demo samples
+         shipped with the model (ml/artifacts/jamming_detector_test_samples.json).
+      2. features + band + scan_mode: run inference on a fully custom
+         feature vector (advanced/API use).
+    """
+    sample_id: Optional[str] = Field(None, description="e.g. 'test_12345' from GET /api/jamming/samples")
+    features: Optional[dict] = Field(None, description="Raw feature dict matching the model's expected stat columns")
+    band: Optional[str] = Field(None, description="'2.4GHz' or '5GHz', required if 'features' is provided")
+    scan_mode: Optional[str] = Field(None, description="'active' or 'passive', required if 'features' is provided")
+
+    @model_validator(mode='after')
+    def check_consistency(self):
+        if not self.sample_id and not self.features:
+            raise ValueError("Provide either 'sample_id' or 'features' (+ band + scan_mode)")
+        if self.features and (not self.band or not self.scan_mode):
+            raise ValueError("'band' and 'scan_mode' are required when providing 'features' directly")
+        return self

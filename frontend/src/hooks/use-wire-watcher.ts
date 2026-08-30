@@ -1,6 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { getHealth, getPredictions, predict, analyzeSpectrum, runSimulation, runSnrSweep } from "@/services/api";
+import {
+  getHealth, getPredictions, predict, analyzeSpectrum, runSimulation, runSnrSweep,
+  getJammingModelInfo, getJammingSamples, predictJamming,
+} from "@/services/api";
 import { ApiError } from "@/services/api";
 import type {
   PredictRequest,
@@ -71,6 +74,33 @@ export function useRunSimulation() {
 export function useSnrSweep() {
   return useMutation({
     mutationFn: (input: Parameters<typeof runSnrSweep>[0]) => runSnrSweep(input),
+  });
+}
+
+/* ---------------------------- jamming detector ---------------------------- */
+
+/** GET /api/jamming/model-info — a SEPARATE model/task from spectrum availability. */
+export function useJammingModelInfo() {
+  return useQuery({
+    queryKey: ["jamming-model-info"],
+    queryFn: getJammingModelInfo,
+    staleTime: 60_000,
+  });
+}
+
+/** GET /api/jamming/samples */
+export function useJammingSamples() {
+  return useQuery({
+    queryKey: ["jamming-samples"],
+    queryFn: getJammingSamples,
+    staleTime: 60_000,
+  });
+}
+
+/** POST /api/jamming/predict */
+export function usePredictJamming() {
+  return useMutation({
+    mutationFn: (sampleId: string) => predictJamming(sampleId),
   });
 }
 

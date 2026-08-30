@@ -11,6 +11,14 @@ ML_DIR = BASE_DIR / "ml"
 MODEL_DIR = ML_DIR / "artifacts"
 METADATA_PATH = MODEL_DIR / "model_metadata.json"
 MODEL_PATH = MODEL_DIR / "wire_watcher_model.pkl"
+
+# RF Interference/Jamming Detector — a SEPARATE, additive model trained on
+# real experimental RF measurements (release_artifacts). Does not replace
+# or interact with the spectrum-availability model paths above.
+JAMMING_MODEL_PATH = MODEL_DIR / "jamming_detector_model.pkl"
+JAMMING_METADATA_PATH = MODEL_DIR / "jamming_detector_metadata.json"
+JAMMING_TEST_SAMPLES_PATH = MODEL_DIR / "jamming_detector_test_samples.json"
+
 WEB_DIR = BASE_DIR / "web" # Fallback if serving static UI
 
 # Database configuration

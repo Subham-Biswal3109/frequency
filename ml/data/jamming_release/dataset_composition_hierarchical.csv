@@ -1,0 +1,29 @@
+scan_mode,label_group,subtype,detail,count
+active,total,,,4358
+active,benign,,,3261
+active,benign,background,,2857
+active,benign,floor,,404
+active,benign,background,location2,1524
+active,benign,background,location1,1333
+active,malicious,,,1097
+active,malicious,waveform_power,gaussian_noise | -40.0 dBm,101
+active,malicious,waveform_power,gaussian_noise | -10.0 dBm,102
+active,malicious,waveform_power,gaussian_noise | 0.0 dBm,153
+active,malicious,waveform_power,gaussian_noise | 10.0 dBm,101
+active,malicious,waveform_power,singletone | -40.0 dBm,101
+active,malicious,waveform_power,singletone | -10.0 dBm,205
+active,malicious,waveform_power,singletone | 0.0 dBm,104
+active,malicious,waveform_power,singletone | 10.0 dBm,230
+passive,total,,,91732
+passive,benign,,,74147
+passive,benign,background,,53715
+passive,benign,floor,,20432
+passive,benign,background,location1,18188
+passive,benign,background,location2,17792
+passive,benign,background,location3,17735
+passive,malicious,,,17585
+passive,malicious,waveform_power,gaussian_noise | 3.0 dBm,4088
+passive,malicious,waveform_power,gaussian_noise | 6.0 dBm,4211
+passive,malicious,waveform_power,gaussian_noise | 9.0 dBm,5228
+passive,malicious,waveform_power,gaussian_noise | 12.0 dBm,4058
+total,all,,,96090

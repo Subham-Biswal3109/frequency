@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as JammingRouteImport } from './routes/jamming'
 import { Route as ModelRouteImport } from './routes/model'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as PredictRouteImport } from './routes/predict'
@@ -25,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
   path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JammingRoute = JammingRouteImport.update({
+  id: '/jamming',
+  path: '/jamming',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ModelRoute = ModelRouteImport.update({
@@ -56,6 +62,7 @@ const StatusRoute = StatusRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/jamming': typeof JammingRoute
   '/model': typeof ModelRoute
   '/monitoring': typeof MonitoringRoute
   '/predict': typeof PredictRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/jamming': typeof JammingRoute
   '/model': typeof ModelRoute
   '/monitoring': typeof MonitoringRoute
   '/predict': typeof PredictRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/jamming': typeof JammingRoute
   '/model': typeof ModelRoute
   '/monitoring': typeof MonitoringRoute
   '/predict': typeof PredictRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/history'
+    | '/jamming'
     | '/model'
     | '/monitoring'
     | '/predict'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/history'
+    | '/jamming'
     | '/model'
     | '/monitoring'
     | '/predict'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/history'
+    | '/jamming'
     | '/model'
     | '/monitoring'
     | '/predict'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HistoryRoute: typeof HistoryRoute
+  JammingRoute: typeof JammingRoute
   ModelRoute: typeof ModelRoute
   MonitoringRoute: typeof MonitoringRoute
   PredictRoute: typeof PredictRoute
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/history'
       fullPath: '/history'
       preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jamming': {
+      id: '/jamming'
+      path: '/jamming'
+      fullPath: '/jamming'
+      preLoaderRoute: typeof JammingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/model': {
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
+  JammingRoute: JammingRoute,
   ModelRoute: ModelRoute,
   MonitoringRoute: MonitoringRoute,
   PredictRoute: PredictRoute,

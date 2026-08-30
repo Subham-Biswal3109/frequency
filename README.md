@@ -113,6 +113,21 @@ The Flask backend exposes the following primary REST endpoints:
 * **`POST /api/spectrum/analyze`**: Simulates an RF environment, performs the FFT to calculate PSD, extracts noise/signal peaks, and returns the raw spectrum graph data for visualization.
 * **`POST /api/predict`**: Accepts an RF JSON payload (either extracted from the RF Simulation or provided manually), queries the ML model, maps confidence thresholds, and persists the transaction to MySQL.
 
+### RF Interference/Jamming Detector (separate model, separate task)
+
+A second, independent Random Forest model trained on **real, experimentally
+measured** RF spectral-scan captures (`release_artifacts`), classifying
+**benign vs. malicious (jamming) RF activity** — distinct from spectrum
+availability. See [`ml/jamming/README.md`](ml/jamming/README.md) for full
+dataset provenance, methodology, and the controlled-vs-confounded evaluation
+writeup.
+
+* **`GET /api/jamming/model-info`**: Dataset provenance, controlled validation metrics (F1=0.853, ROC-AUC=0.987, PR-AUC=0.915), and limitations.
+* **`GET /api/jamming/samples`**: Held-out demo samples with true labels.
+* **`POST /api/jamming/predict`**: Runs the detector on a sample or custom feature vector.
+
+Frontend: `/jamming` page (separate from Spectrum Simulation/Prediction).
+
 ---
 
 ## Development & Testing

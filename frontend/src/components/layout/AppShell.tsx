@@ -7,6 +7,7 @@ import {
   Menu,
   Radar,
   ServerCog,
+  ShieldAlert,
   Waves,
   X,
 } from "lucide-react";
@@ -20,6 +21,7 @@ const NAV = [
   { to: "/predict", label: "Prediction", icon: Radar },
   { to: "/history", label: "Prediction History", icon: History },
   { to: "/simulation", label: "Spectrum Simulation", icon: Waves },
+  { to: "/jamming", label: "Jamming Detection", icon: ShieldAlert },
   { to: "/monitoring", label: "Spectrum Monitoring", icon: Activity },
   { to: "/model", label: "Model Information", icon: BrainCircuit },
   { to: "/status", label: "System Status", icon: ServerCog },

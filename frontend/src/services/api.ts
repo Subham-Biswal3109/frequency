@@ -14,6 +14,9 @@ import type {
   SimulationRunRequest,
   SimulationRunResponse,
   SnrSweepResponse,
+  JammingModelInfoResponse,
+  JammingSamplesResponse,
+  JammingPredictResponse,
 } from "@/types/wire-watcher";
 
 export const API_BASE_URL = (
@@ -295,5 +298,26 @@ export async function runSnrSweep(input: {
   return request<SnrSweepResponse>("/api/simulation/snr-sweep", {
     method: "POST",
     body: JSON.stringify(input),
+  });
+}
+
+/* ---------------------------- jamming detector ----------------------------
+ * A SEPARATE model/task (benign vs malicious RF activity), not spectrum
+ * availability. Does not touch the /api/predict or /api/simulation/* code
+ * paths above.
+ * ------------------------------------------------------------------------- */
+
+export async function getJammingModelInfo(): Promise<JammingModelInfoResponse> {
+  return request<JammingModelInfoResponse>("/api/jamming/model-info", { method: "GET" }, 8000);
+}
+
+export async function getJammingSamples(): Promise<JammingSamplesResponse> {
+  return request<JammingSamplesResponse>("/api/jamming/samples", { method: "GET" }, 8000);
+}
+
+export async function predictJamming(sampleId: string): Promise<JammingPredictResponse> {
+  return request<JammingPredictResponse>("/api/jamming/predict", {
+    method: "POST",
+    body: JSON.stringify({ sample_id: sampleId }),
   });
 }
